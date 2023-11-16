@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.cdisc.org/ns/odm/v1.3"
+           xmlns="http://www.cdisc.org/ns/odm/v1.3"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+           xmlns:xsl="http://www.w3.org/1999/XSL/Transform"           
+           elementFormDefault="qualified" attributeFormDefault="unqualified"
+           version="2.0.0">
+
+  <!--
+      Define-XML 2.0.0 Schematron rules
+  -->
+
+  <xs:annotation>
+    <xs:documentation>Define-XML 2.0.0 Schematron rules.</xs:documentation>
+    <xs:appinfo>
+
+    	<!-- Namespaces Definition -->
+      <sch:ns prefix="xml" uri="http://www.w3.org/XML/1998/namespace" />
+      <sch:ns prefix="xsl" uri="http://www.w3.org/1999/XSL/Transform" />
+      <sch:ns prefix="odm" uri="http://www.cdisc.org/ns/odm/v1.3" />         
+      <sch:ns prefix="def" uri="http://www.cdisc.org/ns/def/v2.0" />          
+      <sch:ns prefix="xlink" uri="http://www.w3.org/1999/xlink" />
+      <sch:ns prefix="arm" uri="http://www.cdisc.org/ns/arm/v1.0" />
+      <sch:ns prefix="nciodm" uri="http://ncicb.nci.nih.gov/xml/odm/EVS/CDISC" />
+      
+      <!-- Unique OIDs for Reference checking -->
+      <xsl:key name="rItemDefOIDs" match="odm:ItemDef" use="@OID"/>
+      <xsl:key name="OrderNumbers" match="odm:ItemRef" use="concat(generate-id(parent::node()),'|',@OrderNumber)"/>
+      <xsl:key name="rWhereClauseDefOIDs" match="def:WhereClauseDef" use="@OID"/>
+      <xsl:key name="CodeListNames" match="odm:CodeList" use="concat(generate-id(parent::node()),'|',@Name)"/>
+      <xsl:key name="CodeListItemOrderNumbers" match="odm:CodeListItem" use="concat(generate-id(parent::node()),'|',@OrderNumber)"/>
+      <xsl:key name="EnumeratedItemOrderNumbers" match="odm:EnumeratedItem" use="concat(generate-id(parent::node()),'|',@OrderNumber)"/>      
+
+      <sch:pattern id="ODM_Namespace_Present">
+        <sch:title>Missing correct ODM Namespace.</sch:title>
+        <sch:rule context="/*">
+          <sch:assert test="namespace-uri(.) = 'http://www.cdisc.org/ns/odm/v1.3'" 
+            flag="REJECT">Missing correct ODM Namespace: http://www.cdisc.org/ns/odm/v1.3</sch:assert>      
+        </sch:rule>
+      </sch:pattern>
+          
+      <!-- Remark that FileType is a required attribute according to the XML-Schema, so we do not need to check on the presence, only on the value -->
+      <sch:pattern id="ODM_FileType">
+        <sch:title>The FileType attribute on the ODM element must have the value 'Snapshot'</sch:title>
+        <sch:rule context="odm:ODM">
+          <sch:assert test="@FileType = 'Snapshot'" flag="ERROR">The FileType attribute on the ODM element must have the value 'Snapshot'.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <!-- ODMVersion is an optional attribute in the XML-Schema -->
+      <sch:pattern id="ODM_Version">
+        <sch:title>ODMVersion attribute on the ODM element must be present and have value '1.3.2'</sch:title>
+        <sch:rule context="odm:ODM">
+          <sch:assert test="@ODMVersion and @ODMVersion = '1.3.2'" flag="ERROR" >The ODMVersion attribute on the ODM element must have the value '1.3.2'.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="Study_Element">
+        <sch:title>A Define-XML document must contain exactly 1 Study element within the ODM element</sch:title>
+        <sch:rule context="odm:ODM">
+          <sch:assert test="count(./odm:Study) = 1" flag="ERROR">The Define-XML file must contain exactly 1 Study element within the ODM element.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="MetaDataVersion_Element">
+        <sch:title>In a Define-XML document, the Study element must have exactly 1 MetaDataVersion element</sch:title>
+        <sch:rule context="odm:Study">
+          <sch:assert test="count(./odm:MetaDataVersion) = 1" flag="ERROR">In a Define-XML file, the Study element must have exactly 1 MetaDataVersion element.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      
+      <sch:pattern id="MetaDataVersion_DefineVersion">
+        <sch:title>Missing or invalid DefineVersion.</sch:title>
+        <sch:rule context="odm:MetaDataVersion">
+          <sch:let name="DEFINEVERSION" value="@def:DefineVersion"/>
+          <sch:assert test="$DEFINEVERSION and $DEFINEVERSION = '2.0.0'" 
+                  flag="ERROR">
+                  Missing or invalid DefineVersion &quot;<sch:value-of select="$DEFINEVERSION"/>&quot;. It needs to be '2.0.0'.
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+    
+      <sch:pattern id="MetaDataVersion_StandardName">
+        <sch:title>Invalid Standard Name. Allowed values are "ADAM-IG", "SDTM-IG", and "SEND-IG".</sch:title>
+        <sch:rule context="odm:MetaDataVersion">
+          <sch:let name="STANDARDNAME" value="@def:StandardName"/>
+          <sch:assert test="$STANDARDNAME and
+            ($STANDARDNAME='ADaM-IG' or
+             $STANDARDNAME='SDTM-IG' or
+             $STANDARDNAME='SEND-IG')"
+            flag="ERROR">
+            Invalid StandardName &quot;<sch:value-of select="$STANDARDNAME"/>&quot;. Allowed values are "ADAM-IG", "SDTM-IG", and "SEND-IG".
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="MetaDataVersion_AnnotatedCRF">
+        <sch:title>MetaDataVersion can have 0 or 1 def:AnnotatedCRF elements</sch:title>
+        <sch:rule context="odm:MetaDataVersion">
+          <sch:assert test="count(./def:AnnotatedCRF) &lt; 2" flag="WARNING">MetaDataVersion can only have 0 or 1 def:AnnotatedCRF elements.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="MetaDataVersion_AnnotatedCRF_DocumentRef">
+        <sch:title>def:AnnotatedCRF must have 1 def:DocumentRef element</sch:title>
+        <sch:rule context="odm:MetaDataVersion/def:AnnotatedCRF">
+          <sch:assert test="count(./def:DocumentRef) = 1" flag="WARNING">def:AnnotatedCRF must have 1 def:DocumentRef element.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="MetaDataVersion_AnnotatedCRF_DocumentRef_leaf">
+        <sch:title>Referenced leaf on def:AnnotatedCRF/def:DocumentRef does not have a corresponding leaf definition</sch:title>
+        <sch:rule context="//def:AnnotatedCRF/def:DocumentRef">
+          <sch:let name="LEAFID" value="@leafID"/>
+          <sch:assert test="//def:leaf[@ID=$LEAFID]"
+            flag="ERROR">
+            Referenced leaf &quot;<sch:value-of select="$LEAFID"/>&quot; from <sch:value-of select="name(..)"/>/<sch:value-of select="name(.)"/> can not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="MetaDataVersion_SupplementalDoc">
+        <sch:title>MetaDataVersion can have 0 or 1 def:SupplementalDoc elements</sch:title>
+        <sch:rule context="odm:MetaDataVersion">
+          <sch:assert test="count(./def:SupplementalDoc) &lt; 2" flag="WARNING">MetaDataVersion can only have 0 or 1 def:SupplementalDoc elements.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="MetaDataVersion_SupplementalDoc_DocumentRef">
+        <sch:title>def:SupplementalDoc must have at least 1 def:DocumentRef element</sch:title>
+        <sch:rule context="odm:MetaDataVersion/def:SupplementalDoc">
+          <sch:assert test="count(./def:DocumentRef) &gt; 0" flag="WARNING">def:SupplementalDoc must have at least 1 def:DocumentRef element.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+            
+      <sch:pattern id="MetaDataVersion_SupplementalDoc_DocumentRef_leaf">
+        <sch:title>Referenced leaf on def:SupplementalDoc/def:DocumentRef does not have a corresponding leaf definition</sch:title>
+        <sch:rule context="//def:SupplementalDoc/def:DocumentRef">
+          <sch:let name="LEAFID" value="@leafID"/>
+          <sch:assert test="//def:leaf[@ID=$LEAFID]"
+            flag="ERROR">
+            Referenced leaf &quot;<sch:value-of select="$LEAFID"/>&quot; from <sch:value-of select="name(..)"/>/<sch:value-of select="name(.)"/> can not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="ValueListDef_ItemRef_WhereClauseRef">
+        <sch:title>ItemRef without WhereClauseRef.</sch:title>
+        <sch:rule context="//def:ValueListDef/odm:ItemRef">
+          <sch:let name="VALUELISTOID" value="../@OID"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="def:WhereClauseRef"  
+            flag="ERROR">
+            No WhereClauseRef (OrderNumber=&quot;<sch:value-of select="$ORDERNUMBER"/>&quot;) 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="parent::*/@OID"/>&quot;.
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+       <sch:pattern id="ValueListDef_ItemRef_WhereClauseDef">
+        <sch:title>ItemRef without corresponding WhereClauseDef.</sch:title>
+        <sch:rule context="odm:ItemRef[def:WhereClauseRef]">
+          <sch:let name="WHERECLAUSEOID" value="def:WhereClauseRef/@WhereClauseOID"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="$WHERECLAUSEOID and count(key('rWhereClauseDefOIDs',$WHERECLAUSEOID)) = 1"  
+            flag="ERROR">
+            Referenced WhereClauseDef &quot;<sch:value-of select="$WHERECLAUSEOID"/>&quot; (OrderNumber=&quot;<sch:value-of select="$ORDERNUMBER"/>&quot;) 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="parent::*/@OID"/>&quot; not found.
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="WhereClauseDef_Not_Referenced">
+        <sch:title>WhereClauseDef not being referenced from an ItemRef or arm:AnalysisDataset.</sch:title>
+        <sch:rule context="def:WhereClauseDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//odm:ItemRef/def:WhereClauseRef[@WhereClauseOID=$OID] or //arm:AnalysisDataset/def:WhereClauseRef[@WhereClauseOID=$OID]" flag="WARNING">
+            def:WhereClauseDef &quot;<sch:value-of select="$OID"/>&quot; element is not being referenced.
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="WhereClauseDef_RangeCheck_ItemDef">
+        <sch:title>A def:ItemOID attribute on the RangeCheck element must reference an existing ItemDef</sch:title>
+        <sch:rule context="odm:RangeCheck[@def:ItemOID]">
+          <sch:let name="ITEMOID" value="@def:ItemOID"/>
+          <sch:assert test="../../odm:ItemDef[@OID=$ITEMOID]" flag="ERROR">Referenced ItemDef '<sch:value-of select="$ITEMOID"/>' in RangeCheck in WhereClauseDef &quot;<sch:value-of select="parent::*/@OID"/>&quot; can not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="WhereClauseDef_CommentDef">
+        <sch:title>CommentDef Element: A def:CommentDef is required for each unique value of the def:CommentOID attribute within the MetaDataVersion/def:WhereClauseDef</sch:title>
+        <sch:rule context="//def:WhereClauseDef[@def:CommentOID]">
+          <sch:let name="COMMENTOID" value="@def:CommentOID"/>
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//def:CommentDef[@OID=$COMMENTOID]"
+            flag="ERROR">
+            Referenced def:CommentOID '<sch:value-of select="$COMMENTOID"/>' on def:WhereClauseDef with OID '<sch:value-of select="$OID"/>' does not have a corresponding def:CommentDef definition.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+
+      <sch:pattern id="ItemGroupDef_Class_ADaM">
+        <sch:title>ADaM: Invalid Class attribute in ItemGroupDef. Allowed values are: "ADAM OTHER", "BASIC DATA STRUCTURE", "INTEGRATED BASIC DATA STRUCTURE", "INTEGRATED OCCURRENCE DATA STRUCTURE", "INTEGRATED SUBJECT LEVEL", OCCURRENCE DATA STRUCTURE", and "SUBJECT LEVEL ANALYSIS DATASET".</sch:title>
+        <sch:rule context="//odm:ItemGroupDef">
+          <sch:let name="STANDARDNAME" value="//odm:MetaDataVersion/@def:StandardName"/>
+          <sch:let name="OID" value="@OID"/>
+          <sch:let name="CLASS" value="@def:Class"/>
+          <sch:report test="$CLASS and
+            $STANDARDNAME='ADaM-IG' and
+            $CLASS != 'ADAM OTHER' and
+            $CLASS != 'BASIC DATA STRUCTURE' and
+            $CLASS != 'OCCURRENCE DATA STRUCTURE' and
+            $CLASS != 'SUBJECT LEVEL ANALYSIS DATASET' and  
+            $CLASS != 'INTEGRATED BASIC DATA STRUCTURE' and
+            $CLASS != 'INTEGRATED OCCURRENCE DATA STRUCTURE' and
+            $CLASS != 'INTEGRATED SUBJECT LEVEL'"
+            flag="ERROR">ItemGroupDef &quot;<sch:value-of select="$OID"/>&quot; has invalid Class value &quot;<sch:value-of select="$CLASS"/>&quot; for <sch:value-of select="$STANDARDNAME"/> standard. 
+          </sch:report>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemGroupDef_Class_SDTM">
+        <sch:title>SDTM: Invalid Class attribute in ItemGroupDef. Allowed values are: "EVENTS", "FINDINGS", "FINDINGS ABOUT", "INTERVENTIONS", "RELATIONSHIPS", "SPECIAL PURPOSE", "STUDY REFERENCE", and "TRIAL DESIGN".</sch:title>
+        <sch:rule context="//odm:ItemGroupDef">
+          <sch:let name="STANDARDNAME" value="//odm:MetaDataVersion/@def:StandardName"/>
+          <sch:let name="OID" value="@OID"/>
+          <sch:let name="CLASS" value="@def:Class"/>
+          <sch:report test="$CLASS and
+            $STANDARDNAME='SDTM-IG' and
+            $CLASS != 'EVENTS' and
+            $CLASS != 'FINDINGS' and
+            $CLASS != 'FINDINGS ABOUT' and
+            $CLASS != 'INTERVENTIONS' and
+            $CLASS != 'RELATIONSHIP' and
+            $CLASS != 'SPECIAL PURPOSE' and  
+            $CLASS != 'STUDY REFERENCE' and  
+            $CLASS != 'TRIAL DESIGN'"   
+            flag="ERROR">ItemGroupDef &quot;<sch:value-of select="$OID"/>&quot; has invalid Class value &quot;<sch:value-of select="$CLASS"/>&quot; for <sch:value-of select="$STANDARDNAME"/> standard. 
+          </sch:report>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemGroupDef_Class_SEND">
+        <sch:title>SEND: Invalid Class attribute in ItemGroupDef. Allowed values are: "EVENTS", "FINDINGS", "FINDINGS ABOUT", "INTERVENTIONS", "RELATIONSHIPS", "SPECIAL PURPOSE", "STUDY REFERENCE", and "TRIAL DESIGN".</sch:title>
+        <sch:rule context="//odm:ItemGroupDef">
+          <sch:let name="STANDARDNAME" value="//odm:MetaDataVersion/@def:StandardName"/>
+          <sch:let name="OID" value="@OID"/>
+          <sch:let name="CLASS" value="@def:Class"/>
+          <sch:report test="$CLASS and
+            $STANDARDNAME='SEND-IG' and
+            $CLASS != 'EVENTS' and
+            $CLASS != 'FINDINGS' and
+            $CLASS != 'INTERVENTIONS' and
+            $CLASS != 'RELATIONSHIP' and
+            $CLASS != 'SPECIAL PURPOSE' and  
+            $CLASS != 'STUDY REFERENCE' and  
+            $CLASS != 'TRIAL DESIGN'"   
+            flag="ERROR">ItemGroupDef &quot;<sch:value-of select="$OID"/>&quot; has invalid Class value &quot;<sch:value-of select="$CLASS"/>&quot; for <sch:value-of select="$STANDARDNAME"/> standard. 
+          </sch:report>
+        </sch:rule>
+      </sch:pattern>
+      
+      <!-- def:ArchiveLocationID is required in the context of a regulatory submission -->
+      <sch:pattern id="ItemGroupDef_ArchiveLocationID">
+        <sch:title>def:ArchiveLocationID on ItemGroupDef is required in the context of a regulatory submission</sch:title>
+        <sch:rule context="odm:ItemGroupDef">
+          <sch:assert test="@def:ArchiveLocationID" flag="ERROR">def:ArchiveLocationID on ItemGroupDef with OID '<sch:value-of select="@OID"/>' is required in the context of a regulatory submission.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <!-- ItemGroupDef def:ArchiveLocationID value must match a def:leaf ID -->
+      <sch:pattern id="ItemGroupDef_leaf_ArchiveLocationID">
+        <sch:title>ItemGroupDef def:ArchiveLocationID value must match a def:leaf ID</sch:title>
+        <sch:rule context="odm:ItemGroupDef[@def:ArchiveLocationID]">
+          <sch:let name="OID" value="@OID"/>
+          <sch:let name="ARCHIVELOCATIONID" value="@def:ArchiveLocationID"/>
+          <sch:assert test="def:leaf[@ID=$ARCHIVELOCATIONID]" flag="ERROR">def:ArchiveLocationID/def:leaf with ID '<sch:value-of select="$ARCHIVELOCATIONID"/>' referenced by ItemGroupDef with OID '<sch:value-of select="$OID"/>' could not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="ItemGroupDef_Description">
+        <sch:title>A non-empty Description element is required for regulatory submissions or any case where the Define-XML will be checked for compliance with a standard that requires a dataset label</sch:title>
+        <sch:rule context="odm:ItemGroupDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" flag="ERROR">
+         A non-empty Description is required for ItemGroupDef &quot;<sch:value-of select="$OID"/>&quot;.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="ItemGroupDef_Alias">
+        <sch:title>ItemGroupDef/Alias is required when ItemGroup represents a Supplemental Qualifiers dataset.</sch:title>
+        <sch:rule context="//odm:ItemGroupDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:let name="NAME" value="@Name"/>
+          <sch:report test="(starts-with($NAME,'SUPP') or 
+            starts-with($NAME,'SQAP')) and 
+            count(./odm:Alias[@Context='DomainDescription']) = 0"
+            flag="ERROR">        
+            ItemGroupDef (<sch:value-of select="$OID"/>) does not have Alias element, while ItemGroup represents a Supplemental Qualifiers dataset.
+          </sch:report>
+        </sch:rule>
+      </sch:pattern>
+            
+      <sch:pattern id="ItemGroupDef_ItemRef_KeySequence">
+        <sch:title>KeySequence is required for regulatory submissions, i.e. there must be at least one ItemRef with a KeySequence attribute</sch:title>
+        <sch:rule context="odm:ItemGroupDef">
+          <sch:let name="ITEMGROUPOID" value="@OID"/>
+          <sch:let name="ITEMGROUPNAME" value="@Name"/>
+          <sch:assert test="count(odm:ItemRef/@KeySequence)>0" flag="ERROR">The use of KeySequence is required in the dataset definition with OID '<sch:value-of select="$ITEMGROUPOID"/>' and Name '<sch:value-of select="$ITEMGROUPNAME"/>', i.e. there must be at least one ItemRef with a def:KeySequence attribute.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="ItemGroupDef_CommentDef">
+        <sch:title>CommentDef Element: A def:CommentDef is required for each unique value of the def:CommentOID attribute within the MetaDataVersion/ItemGroupDef</sch:title>
+        <sch:rule context="//odm:ItemGroupDef[@def:CommentOID]">
+          <sch:let name="COMMENTOID" value="@def:CommentOID"/>
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//def:CommentDef[@OID=$COMMENTOID]"
+            flag="ERROR">
+            Referenced def:CommentOID '<sch:value-of select="$COMMENTOID"/>' on ItemGroupDef with OID '<sch:value-of select="$OID"/>' does not have a corresponding def:CommentDef definition.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemRef_OrderNumber_Integer">
+        <sch:title>OrderNumber Must be an integer.</sch:title>
+        <sch:rule context="odm:ItemRef">
+          <sch:let name="ITEMOID" value="@ItemOID"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="$ORDERNUMBER and ($ORDERNUMBER castable as xs:integer)" 
+            flag="ERROR">
+            ItemRef &quot;<sch:value-of select="$ITEMOID"/>&quot; 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="../@OID"/>&quot;
+            has OrderNumber with invalid integer value &quot;<sch:value-of select="$ORDERNUMBER"/>&quot;. 
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemRef_ItemDef">
+        <sch:title>ItemRef without corresponding ItemDef.</sch:title>
+        <sch:rule context="odm:ItemRef">
+          <sch:let name="ITEMOID" value="@ItemOID"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="$ITEMOID and count(key('rItemDefOIDs',$ITEMOID)) = 1"  
+            flag="ERROR">
+            Referenced ItemDef &quot;<sch:value-of select="$ITEMOID"/>&quot; (OrderNumber=&quot;<sch:value-of select="$ORDERNUMBER"/>&quot;) 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="parent::*/@OID"/>&quot; not found.
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+ 
+      <sch:pattern id="ItemRef_OrderNumber_Duplicate">
+        <sch:title>Duplicate OrderNumber in ItemRef.</sch:title>
+        <sch:rule context="odm:ItemRef">
+          <sch:let name="ITEMOID" value="@ItemOID"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="$ORDERNUMBER and 
+            count(key('OrderNumbers',concat(generate-id(parent::*[1]),'|',$ORDERNUMBER))) = 1" 
+            flag="ERROR">
+            ItemRef &quot;<sch:value-of select="$ITEMOID"/>&quot; 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="../@OID"/>&quot;
+            has duplicate OrderNumber &quot;<sch:value-of select="$ORDERNUMBER"/>&quot;. 
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="ItemRef_MethodDef">
+        <sch:title>MethodDef Element: A MethodDef is required for each unique value of the MethodOID attribute within the MetaDataVersion</sch:title>
+        <sch:rule context="//odm:ItemRef[@MethodOID]">
+          <sch:let name="METHODOID" value="@MethodOID"/>
+          <sch:let name="ITEMOID" value="@ItemOID"/>
+          <sch:assert test="//odm:MethodDef[@OID=$METHODOID]"
+            flag="ERROR">
+            Referenced MethodOID '<sch:value-of select="$METHODOID"/>' on ItemRef with ItemOID '<sch:value-of select="$ITEMOID"/>' does not have a corresponding MethodDef definition.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+    
+      <sch:pattern id="ItemDef_Not_Referenced">
+        <sch:title>ItemDef is not being referenced</sch:title>
+        <sch:rule context="//odm:ItemDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//odm:ItemRef[@ItemOID=$OID]"
+            flag="WARNING">
+            ItemDef element with OID=&quot;<sch:value-of select="$OID"/>&quot; is not being referenced.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemDef_Description">
+        <sch:title>A non-empty Description element is required for regulatory submissions or any case where the Define-XML will be checked for compliance with a standard that requires a variable label</sch:title>
+        <sch:rule context="odm:ItemDef">
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" 
+                  flag="ERROR">
+            A non-empty Description is required for ItemDef &quot;<sch:value-of select="@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="ItemDef_SASFieldName">
+        <sch:title>ItemDef does not have a SASFieldname attribute</sch:title>
+        <sch:rule context="//odm:ItemDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="@SASFieldName"
+            flag="ERROR">
+            ItemDef element with OID=&quot;<sch:value-of select="$OID"/>&quot; does not have a SASFieldName attribute.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemDef_CommentDef">
+        <sch:title>CommentDef Element: A def:CommentDef is required for each unique value of the def:CommentOID attribute within the MetaDataVersion/ItemDef</sch:title>
+        <sch:rule context="//odm:ItemDef[@def:CommentOID]">
+          <sch:let name="COMMENTOID" value="@def:CommentOID"/>
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//def:CommentDef[@OID=$COMMENTOID]"
+            flag="ERROR">
+            Referenced def:CommentOID '<sch:value-of select="$COMMENTOID"/>' on ItemDef with OID '<sch:value-of select="$OID"/>' does not have a corresponding def:CommentDef definition.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemDef_CodeList">
+    	  <sch:title>Referenced CodeList on ItemDef does not have a corresponding CodeListDef definition</sch:title>
+    		<sch:rule context="odm:ItemDef[odm:CodeListRef]">
+    			<sch:let name="CODELISTOID" value="odm:CodeListRef/@CodeListOID"/>
+    			<sch:let name="OID" value="@OID"/>
+    			<sch:assert test="../odm:CodeList[@OID=$CODELISTOID]"
+    			  flag="ERROR">
+    			  Referenced CodeListOID '<sch:value-of select="$CODELISTOID"/>' on ItemDef with OID '<sch:value-of select="$OID"/>' can not be found.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="ItemDef_ValueListRef_ValueListDef">
+        <sch:title>ItemDef attribute ValueListOID must match the OID of a def:ValueListDef in the same MetaDataVersion</sch:title>
+        <sch:rule context="def:ValueListRef[@ValueListOID]">
+          <sch:let name="VALUELISTOID" value="@ValueListOID"/>
+          <sch:let name="PARENTNAME" value="local-name(..)"/>
+          <sch:let name="PARENTOID" value="../@OID"/>
+          <sch:assert test="../../def:ValueListDef[@OID=$VALUELISTOID]" flag="ERROR">Referenced ValueListOID '<sch:value-of select="$VALUELISTOID"/>' of def:ValueListRef, child of element <sch:value-of select="$PARENTNAME"/> with OID '<sch:value-of select="$PARENTOID"/>' does not have a corresponding def:ValueListDef definition.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="ItemDef_Origin_DocumentRef_leaf">
+        <sch:title>Referenced leaf on ItemDef/def:Origin/def:DocumentRef does not have a corresponding leaf definition</sch:title>
+        <sch:rule context="//odm:ItemDef/def:Origin/def:DocumentRef">
+          <sch:let name="LEAFID" value="@leafID"/>
+          <sch:let name="ITEMDEFOID" value="../../@OID"/>
+          <sch:assert test="//def:leaf[@ID=$LEAFID]"
+            flag="ERROR">
+            Referenced leaf &quot;<sch:value-of select="$LEAFID"/>&quot; from ItemDef[@OID=&quot;<sch:value-of select="$ITEMDEFOID"/>&quot;]/<sch:value-of select="name(..)"/>/<sch:value-of select="name(.)"/> element can not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="CodeList_Not_Referenced">
+        <sch:title>CodeList is not being referenced from an ItemDef</sch:title>
+        <sch:rule context="//odm:CodeList">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//odm:ItemDef/odm:CodeListRef[@CodeListOID=$OID]"
+            flag="WARNING">
+            CodeListDef element with OID=&quot;<sch:value-of select="$OID"/>&quot; is not being referenced from an ItemDef.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="CodeList_Name_Duplicate">
+        <sch:title>Duplicate Name in CodeList.</sch:title>
+        <sch:rule context="odm:CodeList">
+          <sch:let name="CODELISTOID" value="@OID"/>
+          <sch:let name="CODELISTNAME" value="@Name"/>
+          <sch:assert test="$CODELISTNAME and 
+            count(key('CodeListNames',concat(generate-id(parent::*[1]),'|',$CODELISTNAME))) = 1" 
+            flag="ERROR">
+            CodeList &quot;<sch:value-of select="$CODELISTOID"/>&quot; has duplicate Name &quot;<sch:value-of select="$CODELISTNAME"/>&quot;. 
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="CodeList_CodeListItem_Rank">
+        <sch:title>CodeListItem Element: If the Rank attribute is provided for any CodeListItem, it must be provided for all CodeListItem within the same CodeList</sch:title>
+        <sch:rule context="odm:CodeList[odm:CodeListItem]">	
+          <sch:let name="CODELISTOID" value="@OID"/>
+          <sch:let name="CODELISTNAME" value="@Name"/>
+          <sch:assert test="count(odm:CodeListItem) = count(odm:CodeListItem/@Rank) or count(odm:CodeListItem/@Rank) = 0" flag="ERROR">Rank is missing for some CodeListItem elements in CodeList with OID '<sch:value-of select="$CODELISTOID"/>' and Name '<sch:value-of select="$CODELISTNAME"/>'.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="CodeList_CodeListItem_OrderNumber">
+        <sch:title>CodeListItem Element: If the OrderNumber attribute is provided for any CodeListItem, it must be provided for all CodeListItem within the same CodeList</sch:title>
+        <sch:rule context="odm:CodeList[odm:CodeListItem]">	
+          <sch:let name="CODELISTOID" value="@OID"/>
+          <sch:let name="CODELISTNAME" value="@Name"/>
+          <sch:assert test="count(odm:CodeListItem) = count(odm:CodeListItem/@OrderNumber) or count(odm:CodeListItem/@OrderNumber) = 0" flag="ERROR">OrderNumber is missing for some CodeListItem elements in CodeList with OID '<sch:value-of select="$CODELISTOID"/>' and Name '<sch:value-of select="$CODELISTNAME"/>'.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="CodeList_CodeListItem_OrderNumber_duplicate">
+        <sch:title>Duplicate OrderNumber in CodeListItem.</sch:title>
+        <sch:rule context="odm:CodeListItem[@OrderNumber]">
+          <sch:let name="CODEDVALUE" value="@CodedValue"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="$ORDERNUMBER and 
+            count(key('CodeListItemOrderNumbers',concat(generate-id(parent::*[1]),'|',$ORDERNUMBER))) = 1" 
+            flag="ERROR">
+            CodedValue &quot;<sch:value-of select="$CODEDVALUE"/>&quot; 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="../@OID"/>&quot;
+            has duplicate OrderNumber &quot;<sch:value-of select="$ORDERNUMBER"/>&quot;. 
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="CodeList_EnumeratedItem_Rank">
+        <sch:title>EnumeratedItemElement: If the Rank attribute is provided for any EnumeratedItem, it must be provided for all EnumeratedItem within the same CodeList</sch:title>
+        <sch:rule context="odm:CodeList[odm:EnumeratedItem]">	
+          <sch:let name="CODELISTOID" value="@OID"/>
+          <sch:let name="CODELISTNAME" value="@Name"/>
+          <sch:assert test="count(odm:EnumeratedItem) = count(odm:EnumeratedItem/@Rank) or count(odm:EnumeratedItem/@Rank) = 0" flag="ERROR">Rank is missing for some EnumeratedItem elements in CodeList with OID '<sch:value-of select="$CODELISTOID"/>' and Name '<sch:value-of select="$CODELISTNAME"/>'.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+       
+      <sch:pattern id="CodeList_EnumeratedItem_OrderNumber">
+        <sch:title>EnumeratedItemElement: If the OrderNumber attribute is provided for any EnumeratedItem, it must be provided for all EnumeratedItem within the same CodeList</sch:title>
+        <sch:rule context="odm:CodeList[odm:EnumeratedItem]">	
+          <sch:let name="CODELISTOID" value="@OID"/>
+          <sch:let name="CODELISTNAME" value="@Name"/>
+          <sch:assert test="count(odm:EnumeratedItem) = count(odm:EnumeratedItem/@OrderNumber) or count(odm:EnumeratedItem/@OrderNumber) = 0" flag="ERROR">OrderNumber is attribute missing for some EnumeratedItem elements in CodeList with OID '<sch:value-of select="$CODELISTOID"/>' and Name '<sch:value-of select="$CODELISTNAME"/>'.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="CodeList_EnumeratedItem_OrderNumber_duplicate">
+        <sch:title>Duplicate OrderNumber in EnumeratedItem.</sch:title>
+        <sch:rule context="odm:EnumeratedItem[@OrderNumber]">
+          <sch:let name="CODEDVALUE" value="@CodedValue"/>
+          <sch:let name="ORDERNUMBER" value="@OrderNumber"/>
+          <sch:assert test="$ORDERNUMBER and 
+            count(key('EnumeratedItemOrderNumbers',concat(generate-id(parent::*[1]),'|',$ORDERNUMBER))) = 1" 
+            flag="ERROR">
+            CodedValue &quot;<sch:value-of select="$CODEDVALUE"/>&quot; 
+            in <sch:value-of select="node-name(parent::*)"/> &quot;<sch:value-of select="../@OID"/>&quot;
+            has duplicate OrderNumber &quot;<sch:value-of select="$ORDERNUMBER"/>&quot;. 
+          </sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="MethodDef_Not_Referenced">
+        <sch:title>MethodDef is not being referenced from an ItemRef</sch:title>
+        <sch:rule context="//odm:MethodDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//odm:ItemRef[@MethodOID=$OID]"
+            flag="WARNING">
+            MethodDef element with OID=&quot;<sch:value-of select="$OID"/>&quot; is not being referenced from an ItemRef.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="MethodDef_Type">
+        <sch:title>Type is required for a Method.</sch:title>
+        <sch:rule context="odm:MethodDef">
+          <sch:assert test="@Type" 
+                  flag="ERROR">
+            Method Type is required for Method &quot;<sch:value-of select="@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+    
+      <sch:pattern id="MethodDef_Description">
+        <sch:title>A non-empty Description is required for a MethodDef.</sch:title>
+        <sch:rule context="odm:MethodDef">
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" 
+                  flag="ERROR">
+            A non-empty Description is required for method &quot;<sch:value-of select="@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+    
+      <sch:pattern id="MethodDef_DocumentRef_leaf">
+        <sch:title>Referenced leaf on MethodDef/def:DocumentRef does not have a corresponding leaf definition</sch:title>
+        <sch:rule context="//odm:MethodDef/def:DocumentRef">
+          <sch:let name="LEAFID" value="@leafID"/>
+          <sch:let name="METHODOID" value="../@OID"/>
+          <sch:assert test="//def:leaf[@ID=$LEAFID]"
+            flag="ERROR">
+            Referenced leaf &quot;<sch:value-of select="$LEAFID"/>&quot; from MethodDef[@OID=&quot;<sch:value-of select="$METHODOID"/>&quot;]/<sch:value-of select="name(..)"/>/<sch:value-of select="name(.)"/> element can not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="CommentDef_Not_Referenced">
+        <sch:title>Element def:CommentDef is not being referenced</sch:title>
+        <sch:rule context="//def:CommentDef">
+          <sch:let name="OID" value="@OID"/>
+          <sch:assert test="//def:WhereClauseDef[@def:CommentOID=$OID] or //odm:ItemDef[@def:CommentOID=$OID] or //odm:ItemGroupDef[@def:CommentOID=$OID] or //arm:AnalysisDatasets[@def:CommentOID=$OID]"
+            flag="WARNING">
+            def:CommentDef element with OID=&quot;<sch:value-of select="$OID"/>&quot; is not being referenced.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="CommentDef_Description">
+        <sch:title>A non-empty Description is required for a def:CommentDef.</sch:title>
+        <sch:rule context="def:CommentDef">
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" 
+                  flag="ERROR">
+            A non-empty Description is required for comment &quot;<sch:value-of select="@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+    
+      <sch:pattern id="CommentDef_DocumentRef_leaf">
+        <sch:title>Referenced leaf on def:CommentDef/def:DocumentRef does not have a corresponding leaf definition</sch:title>
+        <sch:rule context="//def:CommentDef/def:DocumentRef">
+          <sch:let name="LEAFID" value="@leafID"/>
+          <sch:let name="COMMENTOID" value="../@OID"/>
+          <sch:assert test="//def:leaf[@ID=$LEAFID]"
+            flag="ERROR">
+            Referenced leaf &quot;<sch:value-of select="$LEAFID"/>&quot; from def:CommentDef[@OID=&quot;<sch:value-of select="$COMMENTOID"/>&quot;]/<sch:value-of select="name(..)"/>/<sch:value-of select="name(.)"/> element can not be found.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="DocumentRef_PDFPageRef">
+        <sch:title>Multiple DocumentRefs with the same leafID within an element</sch:title>
+        <sch:rule context="//def:DocumentRef">
+          <sch:let name="LEAFID" value="@leafID"/>
+          <sch:let name="PARENTNAME" value="local-name(..)"/>
+          <sch:assert test="count(parent::*/def:DocumentRef[@leafID=$LEAFID]) = 1"
+            flag="NOTE">
+            Multiple def:DocumentRef elements with the same leafID=&quot;<sch:value-of select="$LEAFID"/>&quot; within element <sch:value-of select="$PARENTNAME"/>.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="leaf_DocumentRef_ItemGroupDef">
+        <sch:title>Element def:leaf is not being referenced</sch:title>
+        <sch:rule context="//def:leaf">
+          <sch:let name="ID" value="@ID"/>
+          <sch:assert test="//def:DocumentRef[@leafID=$ID] or //odm:ItemGroupDef[@def:ArchiveLocationID=$ID]"
+            flag="WARNING">
+            def:leaf element with ID=&quot;<sch:value-of select="$ID"/>&quot; is not being referenced.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="leaf_duplicate">
+        <sch:title>Multiple def:leaf elements with the same href and def:title</sch:title>
+        <sch:rule context="//odm:MetaDataVersion/def:leaf">
+          <sch:let name="ID" value="@ID"/>
+          <sch:let name="HREF" value="@xlink:href"/>
+          <sch:let name="TEXT" value="def:title/text()"/>
+          <sch:assert test="count(parent::*/def:leaf[@xlink:href=$HREF and def:title=$TEXT]) = 1"
+            flag="NOTE">
+            Element def:leaf with ID=&quot;<sch:value-of select="$ID"/>&quot; is duplicate (<sch:value-of select="count(parent::*/def:leaf[@xlink:href=$HREF and def:title=$TEXT])"/>).</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      
+
+    </xs:appinfo>
+  </xs:annotation>
+
+</xs:schema>

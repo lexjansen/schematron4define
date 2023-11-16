@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="schematron-ant-validation" basedir="."  default="create-html-report">
+
+    <property file="build.properties"/>
+    <property name="cdisc.define.v21.schema.namespace" value="http://www.cdisc.org/ns/odm/v1.3"/>
+
+    <input message="Define-XML file:" addproperty="define.xml" defaultvalue="../xml/sdtm/define.xml"/>
+    <input message="HTML report:" addproperty="report.html"  defaultvalue="define21_sdtm.html"/>
+
+    <available file="${define.xml}" property="file.exists"/>
+    <fail message="Define-XML file missing: ${define.xml}" unless="file.exists"/>
+
+    <path id="project.class.path">
+        <pathelement path="${saxon.jar}"/>
+    </path>
+
+    <target name="clean-temp">
+        <delete>
+           <fileset dir="${temp.folder}">
+              <include name="def*"/>
+           </fileset>
+        </delete>
+    </target>
+    
+    <target name="xml-schema-validate" depends="clean-temp">
+        <!-- run W3c XML schema validation  -->
+        <echo>*** W3C XML Schema validation</echo>
+        <record name="${temp.folder}/define_xsd_validate.log" action="start"/>
+        <schemavalidate file="${define.xml}" warn="yes" fullchecking="true" failonerror="false">
+            <schema namespace="${cdisc.define.v21.schema.namespace}" file="${cdisc.define.v21.schema.file}"/>
+        </schemavalidate>
+        <record name="${temp.folder}/define_xsd_validate.log" action="stop"/>
+    </target>
+    
+    <target name="extract-schematron-from-xsd" depends="xml-schema-validate">
+        <!-- extract schematron from xsd -->
+        <echo>*** Extract Schematron from XSD</echo>
+        <xslt style="${xsl.folder}/ExtractSchFromXSD-2.xsl" in="${cdisc.define.v21.schematron.file}"
+            out="${temp.folder}/define2-1-0-schematron.sch">
+            <classpath refid="project.class.path"/>
+            <factory name="net.sf.saxon.BasicTransformerFactory"/>
+        </xslt>
+    </target>
+    
+    <target name="schxslt-pipeline" depends="extract-schematron-from-xsd">
+        <!-- run schxslt pipeline -->
+        <echo>*** Run schxslt pipeline</echo>
+        <xslt style="${schxslt.folder}/pipeline-for-svrl.xsl" in="${temp.folder}/define2-1-0-schematron.sch"
+            out="${temp.folder}/define_schxslt_20_rules.xsl">
+            <classpath refid="project.class.path"/>
+            <factory name="net.sf.saxon.BasicTransformerFactory"/>
+        </xslt>
+    </target>
+    
+    <target name="create-svrl-report" depends="schxslt-pipeline">
+        <!-- validate define-xml -->
+        <echo>*** Validate Define-XML</echo>
+        <xslt style="${temp.folder}/define_schxslt_20_rules.xsl" in="${define.xml}"
+            out="${temp.folder}/define_schxslt_20_report.svrl">
+            <classpath refid="project.class.path"/>
+            <factory name="net.sf.saxon.BasicTransformerFactory"/>
+        </xslt>
+    </target>
+    
+    <target name="create-xml-report" depends="create-svrl-report">
+        <!-- report svrl as xml -->
+        <echo>*** Report SVRL as XML</echo>
+        <xslt style="${xsl.folder}/svrl-to-xml.xsl" in="${temp.folder}/define_schxslt_20_report.svrl"
+            out="${temp.folder}/define_schxslt_20_report.xml">
+            <classpath refid="project.class.path"/>
+            <factory name="net.sf.saxon.BasicTransformerFactory"/>
+        </xslt>
+    </target>
+    
+    <target name="create-html-report" depends="create-xml-report">
+        <!-- report as html -->
+        <echo>*** Report as HTML</echo>
+        <xslt style="${xsl.folder}/xml-to-html.xsl" in="${temp.folder}/define_schxslt_20_report.xml" out="${report.html}">
+            <classpath refid="project.class.path"/>
+            <factory name="net.sf.saxon.BasicTransformerFactory"/>
+            <param name="input-uri" expression="${temp.folder}/define_xsd_validate.log"/>
+        </xslt>
+    </target>
+
+</project>

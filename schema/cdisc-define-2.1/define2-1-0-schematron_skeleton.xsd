@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.cdisc.org/ns/odm/v1.3"
+           xmlns="http://www.cdisc.org/ns/odm/v1.3"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+           xmlns:xsl="http://www.w3.org/1999/XSL/Transform"           
+           elementFormDefault="qualified" attributeFormDefault="unqualified"
+           version="2.1.0">
+
+  <!--
+      Define-XML 2.1.0 Schematron rules
+  -->
+
+  <xs:annotation>
+    <xs:documentation>Define-XML 2.1.0 Schematron rules.</xs:documentation>
+    <xs:appinfo>
+
+      <!-- Namespaces Definition -->
+      <sch:ns prefix="xml" uri="http://www.w3.org/XML/1998/namespace" />
+      <sch:ns prefix="xsl" uri="http://www.w3.org/1999/XSL/Transform" />
+      <sch:ns prefix="odm" uri="http://www.cdisc.org/ns/odm/v1.3" />         
+      <sch:ns prefix="def" uri="http://www.cdisc.org/ns/def/v2.1" />          
+      <sch:ns prefix="xlink" uri="http://www.w3.org/1999/xlink" />
+      <sch:ns prefix="arm" uri="http://www.cdisc.org/ns/arm/v1.0" />
+      <sch:ns prefix="nciodm" uri="http://ncicb.nci.nih.gov/xml/odm/EVS/CDISC" />
+      
+      <!-- Keys for Reference checking -->
+      
+      <!-- Patterns -->
+
+      <sch:pattern id="ASSERT TEST">
+        <sch:rule context="odm:ODM" >
+          <sch:let name="DOC" value="name(/*)"/>
+          <sch:assert test="'a' = 'b'" flag="NOTE" see="Section 1.1">The name of the root element is <sch:value-of select="$DOC"/></sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="REPORT TEST">
+        <sch:rule context="odm:ODM">
+          <sch:let name="DOC" value="name(/*)"/>
+          <sch:report test="'a' != 'b'" flag="NOTE" see="Section 1.2.1">The name of the root element is <sch:value-of select="$DOC"/></sch:report>
+        </sch:rule>
+      </sch:pattern>
+      
+      <!-- Diagnostics -->
+      
+
+    </xs:appinfo>
+  </xs:annotation>
+
+</xs:schema>

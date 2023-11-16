@@ -1,0 +1,301 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Validation Report</title>
+      <style type="text/css">
+      
+      body{
+        background-color:#FFFFFF;
+        font-family:Verdana, Arial, Helvetica, sans-serif;        
+        font-size:62.5%;
+        margin:0;
+        padding:30px;        
+      }
+
+      #menu{
+        position: fixed;
+        left: 0px;
+        top: 10px;
+        width: 15%;
+        height: 96%;
+        bottom: 0px;
+        overflow: auto;
+        background-color: #FFFFFF;
+        color: #000000;
+        border: 0px;
+        text-align: left;
+        white-space: nowrap;
+        font-size:1.3em;
+      }
+      
+      .hmenu ul{
+        padding-left: 14px;
+        margin-left: 0;
+      }
+      .hmenu li{
+      list-style: none;
+      line-height: 200%;
+      padding-left: 0;
+      }
+      
+      #main{
+      position: absolute;
+      left: 15%;
+      top: 0px;
+      bottom: 20px;
+      overflow: auto;
+      background-color: #FFFFFF;
+      color: #000000;
+      float: none !important;
+      }
+      
+      h1{
+      font-size:1.6em;
+      font-weight:bolder;
+      text-align:center;
+      }
+      h2{
+      font-size:1.4em;
+      font-weight:bolder;
+      color:#800000;
+      text-align:center;
+      }
+      h3{
+      font-size:1.2em;
+      font-weight:bolder;
+      color:#800000;
+      text-align:center;
+      }
+      p{
+      font-size:1.4em;
+      }
+      table{
+      width:95%;
+      border-spacing:4px;
+      border:1px solid #000000;
+      background-color:#EEEEEE;
+      margin-top:5px;
+      border-collapse:collapse;
+      padding:5px;
+      empty-cells:show;
+      }
+      
+      table tr{
+      border:1px solid #000000;
+      }
+      thead tr{
+      background-color:#6699CC;
+      color:#FFFFFF;
+      font-weight:bold;
+      }
+      table th{
+      font-weight:bold;
+      vertical-align:top;
+      text-align:left;
+      padding:5px;
+      border:1px solid #000000;
+      font-size:1.5em;
+      }
+      
+      table td{
+      vertical-align:top;
+      padding:5px;
+      border:1px solid #000000;
+      font-size:1.3em;
+      line-height:150%;
+      }
+      
+      .severity-error,  .severity-reject{
+      color:#FF0000;
+      }
+      
+      .xml-validate {
+      font-size:200%;
+      }
+      
+    </style>
+   </head>
+   <body>
+      <div id="menu">
+         <ul class="hmenu">
+            <li class="hmenu-item"><a href="#active-patterns">Rules Checked</a></li>
+            <li class="hmenu-item"><a href="#issue-summary">Schematron Issue Summary</a></li>
+            <li class="hmenu-item"><a href="#issue-details">Schematron Issue Details</a></li>
+            <li class="hmenu-item"><a href="#xml-schema-issues">XML Schema Issue Details</a></li>
+         </ul>
+      </div>
+      <div id="main">
+         <h1>Validation Results - 2023-11-16T15:11:01</h1>
+         <h3>file:/C:/_github/lexjansen/Schematron4Define/xml/adam/define.xml</h3><br></br><h2>Validation Report</h2>
+         <h2 id="active-patterns">Schematron Rules Checked</h2>
+         <table class="results">
+            <thead>
+               <tr>
+                  <th>Rule ID</th>
+                  <th>Description</th>
+                  <th>Issues?</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>ResultDisplay_OID_Unique</td>
+                  <td>@OID in arm:ResultDisplay must be unique in arm:AnalysisResultDisplays.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>ResultDisplay_Name_Unique</td>
+                  <td>@Name in arm:ResultDisplay must be unique in arm:AnalysisResultDisplays.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>ResultDisplay_Description</td>
+                  <td>A non-empty Description is required for an arm:ResultDisplay.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_Description</td>
+                  <td>A non-empty Description is required for an arm:AnalysisResult.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>Documentation_Description</td>
+                  <td>A non-empty Description is required for an arm:Documentation element.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_DocumentRef_leaf</td>
+                  <td>@leafID in arm:AnalysisResultDisplays/arm:ResultDisplay/def:DocumentRef must match
+                     @leafID in def:leaf.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_Documentation_leaf</td>
+                  <td>@leafID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:Documentation
+                     must match @leafID in def:DocumentRef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_ProgrammingCode_leaf</td>
+                  <td>@leafID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:ProgrammingCode
+                     must match @leafID in def:DocumentRef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_OID_Unique</td>
+                  <td>@OID in arm:AnalysisResult must be unique in arm:ResultDisplay.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_ParameterOID_ItemDef</td>
+                  <td>@ParameterOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult must
+                     match @OID in ItemDef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_ParameterOID_BDS</td>
+                  <td>@ParameterOID in arm:AnalysisResult is required when the analysis result is based
+                     on specific parameter(s) from a BDS structured dataset.</td>
+                  <td>Yes</td>
+               </tr>
+               <tr>
+                  <td>AnalysisResult_ParameterOID_BDS2</td>
+                  <td>@ParameterOID should only be specified when arm:AnalysisResult is based on a BDS structured
+                     dataset.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisDatasets_CommentDef</td>
+                  <td>@def:CommentOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets
+                     must match @OID in def:CommentDef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisDatasets2_CommentDef</td>
+                  <td>@def:CommentOID in arm:AnalysisDatasets is required when there is more than one analysis
+                     dataset needed to create the respective result.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisDataset_ItemGroupDef</td>
+                  <td>@ItemGroupOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/arm:AnalysisDataset
+                     must match @OID in ItemGroupDef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisDataset_WhereClauseDef</td>
+                  <td>@WhereClauseOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/arm:AnalysisDataset/def:WhereClauseRef
+                     must match @OID in def:WhereClauseDef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisVariable</td>
+                  <td>[5] At least one arm:AnalysisVariable must be available for any given arm:AnalysisResult
+                     element.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>AnalysisVariable_ItemDef</td>
+                  <td>@ItemOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/
+                     arm:AnalysisDataset/arm:AnalysisVariable must match @OID in ItemDef.</td>
+                  <td></td>
+               </tr>
+               <tr>
+                  <td>ProgrammingCode_Code_DocumentRef</td>
+                  <td>arm:ProgrammingCode must contain either one arm:Code or one or more def:DocumentRef.</td>
+                  <td></td>
+               </tr>
+            </tbody>
+         </table>
+         <h2 id="issue-summary">Schematron Issue Summary</h2>
+         <table class="results">
+            <thead>
+               <tr>
+                  <th>Rule ID</th>
+                  <th>Description</th>
+                  <th># Issues</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>AnalysisResult_ParameterOID_BDS</td>
+                  <td>@ParameterOID in arm:AnalysisResult is required when the analysis result is based
+                     on specific parameter(s) from a BDS structured dataset.</td>
+                  <td>1</td>
+               </tr>
+            </tbody>
+         </table>
+         <h2 id="issue-details">Schematron Issue Details</h2>
+         <table class="results">
+            <thead>
+               <tr>
+                  <th>Rule ID</th>
+                  <th>Severity</th>
+                  <th>Reference</th>
+                  <th>Message</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td class="checkid">AnalysisResult_ParameterOID_BDS</td>
+                  <td class="severity-error">ERROR</td>
+                  <td class="see">5.3.5. arm:AnalysisResult Element</td>
+                  <td class="message">The analysis result is based on specific parameter(s) from a BDS structured dataset,
+                     but arm:AnalysisResult (AR.Table14.3.01.AR.0000) does not have a ParameterOID.</td>
+               </tr>
+            </tbody>
+         </table>
+         <h2 id="xml-schema-issues">XML Schema Validation Report</h2>
+         <table>
+            <thead>
+               <tr>
+                  <th>Row</th>
+                  <th>Column</th>
+                  <th>XML Schema Rule</th>
+                  <th>Description</th>
+               </tr>
+            </thead>
+         </table>
+      </div>
+   </body>
+</html>

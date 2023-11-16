@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+      Analysis Results Metadata 1.0 Schematron rules
+  -->
+
+<xs:schema targetNamespace="http://www.cdisc.org/ns/odm/v1.3"
+  xmlns="http://www.cdisc.org/ns/odm/v1.3"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"           
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="2.0.0">
+  
+  <xs:annotation>
+    <xs:documentation>Define-XML 2.1.0 Schematron rules.</xs:documentation>
+    <xs:appinfo>
+
+    	<!-- Namespaces Definition -->
+    	<sch:ns prefix="odm" uri="http://www.cdisc.org/ns/odm/v1.3"/>
+    	<sch:ns prefix="sdm" uri="http://www.cdisc.org/ns/studydesign/v1.0"/>
+    	<sch:ns prefix="def" uri="http://www.cdisc.org/ns/def/v2.1"/>
+    	<sch:ns prefix="arm" uri="http://www.cdisc.org/ns/arm/v1.0"/>
+    	<sch:ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
+    	<sch:ns prefix="xml" uri="http://www.w3.org/XML/1998/namespace"/>
+ 
+ 
+    	<sch:pattern id="ResultDisplay_OID_Unique">
+    		<sch:title>@OID in arm:ResultDisplay must be unique in arm:AnalysisResultDisplays.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay">
+    			<sch:let name="DISPLAYOID" value="@OID"/>
+    		  <sch:assert test="count(preceding-sibling::arm:ResultDisplay[@OID = $DISPLAYOID]) = 0" see="5.3.2. arm:ResultDisplay Element" flag="ERROR">Duplicate OID in arm:ResultDisplay (<sch:value-of select="$DISPLAYOID"/>) exists.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+    	<sch:pattern id="ResultDisplay_Name_Unique">
+    		<sch:title>@Name in arm:ResultDisplay must be unique in arm:AnalysisResultDisplays.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay">
+    			<sch:let name="DISPLAYNAME" value="@Name"/>
+    			<sch:assert test="count(preceding-sibling::arm:ResultDisplay[@Name = $DISPLAYNAME]) = 0" see="5.3.2. arm:ResultDisplay Element" flag="ERROR">Duplicate Name in arm:ResultDisplay (<sch:value-of select="$DISPLAYNAME"/>) exists.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="ResultDisplay_Description">
+        <sch:title>A non-empty Description is required for an arm:ResultDisplay.</sch:title>
+        <sch:rule context="arm:ResultDisplay">
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" 
+                  see="5.3.2. arm:ResultDisplay Element" flag="ERROR">
+            A non-empty Description is required for ResultDisplay &quot;<sch:value-of select="@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="AnalysisResult_Description">
+        <sch:title>A non-empty Description is required for an arm:AnalysisResult.</sch:title>
+        <sch:rule context="arm:AnalysisResult">
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" 
+                  see="5.3.5. arm:AnalysisResult Element" flag="ERROR">
+            A non-empty Description is required for AnalysisResult &quot;<sch:value-of select="@OID"/>&quot; in AnalysisDisplay &quot;<sch:value-of select="../@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="Documentation_Description">
+        <sch:title>A non-empty Description is required for an arm:Documentation element.</sch:title>
+        <sch:rule context="arm:Documentation">
+          <sch:assert test="string-length(normalize-space(odm:Description/odm:TranslatedText/text())) &gt; 0" 
+                  see="5.3.8. arm:Documentation Element" flag="ERROR">
+            A non-empty Description is required for the Documentation element in AnalysisResult &quot;<sch:value-of select="../@OID"/>&quot; in AnalaysisDisplay &quot;<sch:value-of select="../../@OID"/>&quot;. 
+          </sch:assert>
+      	</sch:rule>
+      </sch:pattern>
+
+      <sch:pattern id="AnalysisResult_DocumentRef_leaf">
+    		<sch:title>@leafID in arm:AnalysisResultDisplays/arm:ResultDisplay/def:DocumentRef must match @leafID in def:leaf.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/def:DocumentRef[@leafID]">
+    			<sch:let name="LEAFID" value="@leafID"/>
+    		  <sch:assert test="//def:leaf[@ID = $LEAFID]" see="5.3.4. def:DocumentRef Element" flag="ERROR">def:DocumentRef with leafID <sch:value-of select="$LEAFID"/> in ResultDisplay <sch:value-of select="../@OID"/> does not have the corresponding def:leaf definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisResult_Documentation_leaf">
+    		<sch:title>@leafID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:Documentation must match @leafID in def:DocumentRef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:Documentation/def:DocumentRef[@leafID]">
+    			<sch:let name="LEAFID" value="@leafID"/>
+    		  <sch:assert test="//def:leaf[@ID = $LEAFID]" see="5.3.4. def:DocumentRef Element" flag="ERROR">arm:Documentation with leafID <sch:value-of select="$LEAFID"/> in AnalysisResult <sch:value-of select="../../@OID"/> does not have the corresponding def:leaf definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisResult_ProgrammingCode_leaf">
+    		<sch:title>@leafID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:ProgrammingCode must match @leafID in def:DocumentRef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:ProgrammingCode/def:DocumentRef[@leafID]">
+    			<sch:let name="LEAFID" value="@leafID"/>
+    		  <sch:assert test="//def:leaf[@ID = $LEAFID]" see="5.3.4. def:DocumentRef Element" flag="ERROR">arm:ProgrammingCode with leafID <sch:value-of select="$LEAFID"/> in AnalysisResult <sch:value-of select="../../@OID"/> does not have the corresponding def:leaf definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisResult_OID_Unique">
+    		<sch:title>@OID in arm:AnalysisResult must be unique in arm:ResultDisplay.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult">
+    			<sch:let name="ANALYSISRESULTOID" value="@OID"/>
+    		  <sch:assert test="count(preceding-sibling::arm:AnalysisResult[@OID = $ANALYSISRESULTOID]) = 0" see="5.3.5. arm:AnalysisResult Element" flag="ERROR">Duplicate OID in arm:AnalysisResult (<sch:value-of select="$ANALYSISRESULTOID"/>) exists.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisResult_ParameterOID_ItemDef">
+    		<sch:title>@ParameterOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult must match @OID in ItemDef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult[@ParameterOID]">
+    			<sch:let name="PARAMETEROID" value="@ParameterOID"/>
+    		  <sch:assert test="//odm:ItemDef[@OID = $PARAMETEROID]" see="5.3.5. arm:AnalysisResult Element" flag="ERROR">arm:AnalysisResult with ParameterOID (<sch:value-of select="$PARAMETEROID"/>) does not have a corresponding ItemDef definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+
+      <sch:pattern id="AnalysisResult_ParameterOID_BDS">
+        <sch:title>@ParameterOID in arm:AnalysisResult is required when the analysis result is based on specific parameter(s) from a BDS structured dataset.</sch:title>
+        <sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult">
+          <sch:let name="ANALYSISRESULTOID" value="@OID"/>
+          <sch:let name="ITEMGROUPOID" value="./arm:AnalysisDatasets/arm:AnalysisDataset/@ItemGroupOID"/>
+          <sch:assert test="(count(//odm:ItemGroupDef[@OID = $ITEMGROUPOID]/def:Class[@Name = 'BASIC DATA STRUCTURE']) = 0) or (count(//odm:ItemGroupDef[@OID = $ITEMGROUPOID and @def:Class = 'BASIC DATA STRUCTURE']) gt 0 and @ParameterOID)" see="5.3.5. arm:AnalysisResult Element" flag="ERROR">The analysis result is based on specific parameter(s) from a BDS structured dataset, but arm:AnalysisResult (<sch:value-of select="$ANALYSISRESULTOID"/>) does not have a ParameterOID.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="AnalysisResult_ParameterOID_BDS2">
+        <sch:title>@ParameterOID should only be specified when arm:AnalysisResult is based on a BDS structured dataset.</sch:title>
+        <sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult">
+          <sch:let name="ANALYSISRESULTOID" value="@OID"/>
+          <sch:let name="ITEMGROUPOID" value="./arm:AnalysisDatasets/arm:AnalysisDataset/@ItemGroupOID"/>
+          <sch:report test="(count(//odm:ItemGroupDef[@OID = $ITEMGROUPOID]/def:Class[@Name = 'BASIC DATA STRUCTURE']) = 0) and @ParameterOID" see="5.3.5. arm:AnalysisResult Element" flag="WARNING">The analysis result (<sch:value-of select="$ANALYSISRESULTOID"/>) is not based on a BDS structured dataset, but still has a ParameterOID (<sch:value-of select="@ParameterOID"/>).</sch:report>
+        </sch:rule>
+      </sch:pattern>
+      
+      <sch:pattern id="AnalysisDatasets_CommentDef">
+    		<sch:title>@def:CommentOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets must match @OID in def:CommentDef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets[@def:CommentOID]">
+    			<sch:let name="COMMENTOID" value="@def:CommentOID"/>
+    		  <sch:assert test="//def:CommentDef[@OID = $COMMENTOID]" see="5.3.6. arm:AnalysisDatasets Element" flag="ERROR">arm:AnalysisDatasets with def:CommentOID (<sch:value-of select="$COMMENTOID"/>) does not have the corresponding def:CommentDef definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisDatasets2_CommentDef">
+    		<sch:title>@def:CommentOID in arm:AnalysisDatasets is required when there is more than one analysis dataset needed to create the respective result.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets">
+    			<sch:let name="OID" value="../@OID"/>
+    		  <sch:assert test="(count(arm:AnalysisDataset) = 1) or (count(arm:AnalysisDataset) gt 1 and @def:CommentOID)" see="5.3.6. arm:AnalysisDatasets Element" flag="ERROR">There is more than one analysis dataset needed to create the analysis result (<sch:value-of select="$OID"/>), but arm:AnalysisDatasets does not have a def:CommentOID.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisDataset_ItemGroupDef">
+    		<sch:title>@ItemGroupOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/arm:AnalysisDataset must match @OID in ItemGroupDef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/arm:AnalysisDataset[@ItemGroupOID]">
+    			<sch:let name="ITEMGROUPOID" value="@ItemGroupOID"/>
+    		  <sch:assert test="//odm:ItemGroupDef[@OID = $ITEMGROUPOID]" see="5.3.7. arm:AnalysisDataset Element" flag="ERROR">arm:AnalysisDataset with ItemGroupOID (<sch:value-of select="$ITEMGROUPOID"/>) does not have the corresponding ItemGroupDef definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisDataset_WhereClauseDef">
+    		<sch:title>@WhereClauseOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/arm:AnalysisDataset/def:WhereClauseRef must match @OID in def:WhereClauseDef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/arm:AnalysisDataset/def:WhereClauseRef[@WhereClauseOID]">
+    			<sch:let name="WHERECLAUSEOID" value="@WhereClauseOID"/>
+    		  <sch:assert test="//def:WhereClauseDef[@OID = $WHERECLAUSEOID]" see="5.3.7.1. def:WhereClauseRef Element" flag="ERROR">def:WhereClauseRef with WhereClauseOID (<sch:value-of select="$WHERECLAUSEOID"/>) does not have the corresponding def:WhereClauseDef definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisVariable">
+    		<sch:title>[5] At least one arm:AnalysisVariable must be available for any given arm:AnalysisResult element.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult">
+    			<sch:let name="OID" value="@OID"/>
+    		  <sch:assert test="count(descendant::arm:AnalysisVariable) gt 0" see=".3.7.2. arm:AnalysisVariable Element" flag="ERROR">arm:AnalysisResult (<sch:value-of select="$OID"/>) does not have arm:AnalysisVariable.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="AnalysisVariable_ItemDef">
+    		<sch:title>@ItemOID in arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/ arm:AnalysisDataset/arm:AnalysisVariable must match @OID in ItemDef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:AnalysisDatasets/ arm:AnalysisDataset/arm:AnalysisVariable[@ItemOID]">
+    			<sch:let name="ITEMOID" value="@ItemOID"/>
+    		  <sch:assert test="//odm:ItemDef[@OID = $ITEMOID]" see="5.3.7.2. arm:AnalysisVariable Element" flag="ERROR">arm:AnalysisVariable with ItemOID (<sch:value-of select="$ITEMOID"/>) does not have the corresponding ItemDef definition.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+    
+      <sch:pattern id="ProgrammingCode_Code_DocumentRef">
+    		<sch:title>arm:ProgrammingCode must contain either one arm:Code or one or more def:DocumentRef.</sch:title>
+    		<sch:rule context="//arm:AnalysisResultDisplays/arm:ResultDisplay/arm:AnalysisResult/arm:ProgrammingCode">
+    			<sch:let name="OID" value="../@OID"/>
+    		  <sch:assert test="count(arm:Code) = 1 or count(def:DocumentRef) gt 0" see="5.3.9. arm:ProgrammingCode Element" flag="ERROR">arm:ProgrammingCode in arm:AnalysisResult (<sch:value-of select="$OID"/>) does not contain arm:Code or def:DocumentRef.</sch:assert>
+    		</sch:rule>
+    	</sch:pattern>
+
+    </xs:appinfo>
+  </xs:annotation>
+
+</xs:schema>
