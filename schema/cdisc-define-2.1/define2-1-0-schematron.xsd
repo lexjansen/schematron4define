@@ -294,7 +294,7 @@
         <sch:title>Only certain classes are applicable for Analysis datasets.</sch:title>
         <sch:rule context="//odm:ItemGroupDef[@Purpose='Analysis']/def:Class">
           <sch:let name="OID" value="../@OID"/>
-          <sch:let name="NAME" value="../../@Name"/>
+          <sch:let name="NAME" value="../@Name"/>
           <sch:let name="CLASS" value="@Name"/>
           <sch:let name="ADAMCLASS" value="('ADAM OTHER', 'BASIC DATA STRUCTURE', 'DEVICE LEVEL ANALYSIS DATASET', 'MEDICAL DEVICE BASIC DATA STRUCTURE', 'MEDICAL DEVICE OCCURRENCE DATA STRUCTURE', 'OCCURRENCE DATA STRUCTURE', 'SUBJECT LEVEL ANALYSIS DATASET')"/>
           <sch:report test="not($CLASS = $ADAMCLASS)" 

@@ -126,8 +126,8 @@
          </ul>
       </div>
       <div id="main">
-         <h1>Validation Results - 2023-11-16T14:56:02</h1>
-         <h3>file:/C:/_github/lexjansen/Schematron4Define/xml/sdtm/define.xml</h3><br></br><h2>Validation Report</h2>
+         <h1>Validation Results - 2023-11-16T19:39:50</h1>
+         <h3>file:/C:/_github/lexjansen/schematron4define/xml/adam/define.xml</h3><br></br><h2>Validation Report</h2>
          <h2 id="active-patterns">Schematron Rules Checked</h2>
          <table class="results">
             <thead>
@@ -146,7 +146,7 @@
                <tr>
                   <td>ODM_FileType</td>
                   <td>The FileType attribute on the ODM element must have the value 'Snapshot'</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ODM_Version</td>
@@ -239,12 +239,12 @@
                <tr>
                   <td>ItemGroupDef_NoData_ArchiveLocationID</td>
                   <td>def:ArchiveLocationID on ItemGroupDef should not be there when there is no data</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_ArchiveLocationID</td>
                   <td>def:ArchiveLocationID on ItemGroupDef is required when there is data</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_leaf_ArchiveLocationID</td>
@@ -254,12 +254,12 @@
                <tr>
                   <td>ItemGroupDef_Standard_NonStandard_both</td>
                   <td>ItemGroup should either reference a standard or be NonStandard, but not both.</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_Standard_NonStandard</td>
                   <td>ItemGroup should either reference a standard or be NonStandard.</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_Description</td>
@@ -272,27 +272,27 @@
                   <td>ItemGroupDef_Alias</td>
                   <td>ItemGroupDef/Alias is required when ItemGroup represents a Supplemental Qualifiers
                      dataset.</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_Class_Analysis</td>
                   <td>Only certain classes are applicable for Analysis datasets.</td>
-                  <td></td>
+                  <td>Yes</td>
                </tr>
                <tr>
                   <td>ItemGroupDef_Class_Tabulation</td>
                   <td>Only certain classes are applicable for Tabulation datasets.</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_Class_SubClass_Analysis</td>
                   <td>Only Analysis datasets have subclasses.</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef-Class-SubClass</td>
                   <td>Only certain SubClass Name values are allowed within a Class</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemGroupDef_ItemRef_KeySequence</td>
@@ -335,7 +335,7 @@
                <tr>
                   <td>ItemDef_Origin_Collected</td>
                   <td>Collected item needs CRF</td>
-                  <td>Yes</td>
+                  <td></td>
                </tr>
                <tr>
                   <td>ItemDef_CommentDef</td>
@@ -483,60 +483,14 @@
             </thead>
             <tbody>
                <tr>
-                  <td>ODM_FileType</td>
-                  <td>The FileType attribute on the ODM element must have the value 'Snapshot'</td>
-                  <td>1</td>
-               </tr>
-               <tr>
                   <td>Standard_Not_Referenced</td>
                   <td>Element def:Standard is not being referenced</td>
-                  <td>2</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef_NoData_ArchiveLocationID</td>
-                  <td>def:ArchiveLocationID on ItemGroupDef should not be there when there is no data</td>
                   <td>1</td>
                </tr>
                <tr>
-                  <td>ItemGroupDef_ArchiveLocationID</td>
-                  <td>def:ArchiveLocationID on ItemGroupDef is required when there is data</td>
+                  <td>ItemGroupDef_Class_Analysis</td>
+                  <td>Only certain classes are applicable for Analysis datasets.</td>
                   <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef_Standard_NonStandard_both</td>
-                  <td>ItemGroup should either reference a standard or be NonStandard, but not both.</td>
-                  <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef_Standard_NonStandard</td>
-                  <td>ItemGroup should either reference a standard or be NonStandard.</td>
-                  <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef_Alias</td>
-                  <td>ItemGroupDef/Alias is required when ItemGroup represents a Supplemental Qualifiers
-                     dataset.</td>
-                  <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef_Class_Tabulation</td>
-                  <td>Only certain classes are applicable for Tabulation datasets.</td>
-                  <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef_Class_SubClass_Analysis</td>
-                  <td>Only Analysis datasets have subclasses.</td>
-                  <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemGroupDef-Class-SubClass</td>
-                  <td>Only certain SubClass Name values are allowed within a Class</td>
-                  <td>1</td>
-               </tr>
-               <tr>
-                  <td>ItemDef_Origin_Collected</td>
-                  <td>Collected item needs CRF</td>
-                  <td>2</td>
                </tr>
             </tbody>
          </table>
@@ -552,94 +506,20 @@
             </thead>
             <tbody>
                <tr>
-                  <td class="checkid">ODM_FileType</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"><a href="https://wiki.cdisc.org/x/Z6OzAg">Section 5.3.3 ODM Element</a> ODM/@FileType</td>
-                  <td class="message">The FileType attribute on the ODM element is "Transactional ", but must have the value
-                     "Snapshot".</td>
-               </tr>
-               <tr>
                   <td class="checkid">Standard_Not_Referenced</td>
                   <td class="severity-warning">WARNING</td>
                   <td class="see">Section 5.3.6 def:Standards Element</td>
-                  <td class="message">def:Standard element with OID="STD.2_1" (SDTMIG-MD, 1.1, ) is not being referenced.</td>
+                  <td class="message">def:Standard element with OID="STD.DEFINE-XML" (CDISC/NCI, 2020-12-18, DEFINE-XML)
+                     is not being referenced.</td>
                </tr>
                <tr>
-                  <td class="checkid">Standard_Not_Referenced</td>
-                  <td class="severity-warning">WARNING</td>
-                  <td class="see">Section 5.3.6 def:Standards Element</td>
-                  <td class="message">def:Standard element with OID="STD.4" (CDISC/NCI, 2020-12-18, DEFINE-XML) is not being
-                     referenced.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_NoData_ArchiveLocationID</td>
+                  <td class="checkid">ItemGroupDef_Class_Analysis</td>
                   <td class="severity-error">ERROR</td>
                   <td class="see"></td>
-                  <td class="message">def:ArchiveLocationID on ItemGroupDef with OID 'IG.NV' should not be there when there
-                     is no data (def:HasNoData="Yes").</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_ArchiveLocationID</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">def:ArchiveLocationID on ItemGroupDef with OID 'IG.OE' is required when there is data.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_Standard_NonStandard_both</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">ItemGroup 'IG.OE' should either reference a standard or be NonStandard (@def:IsNonStandard='Yes'),
-                     but not both.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_Standard_NonStandard</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">ItemGroupDefs "QSPH" (IG.QSPH) should either reference a standard or be NonStandard
-                     (@def:IsNonStandard='Yes').</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_Alias</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">ItemGroupDefs "SUPPDM" (IG.SUPPDM) does not have an Alias with a DomainDescription,
-                     while ItemGroup represents a Supplemental Qualifiers dataset.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_Class_Tabulation</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">ItemGroupDef "DM" (IG.DM) has invalid Class value "SUBJECT LEVEL ANALYSIS DATASET".
-                     For Tabulation datasets the allowed values are: EVENTS, FINDINGS, FINDINGS ABOUT,
-                     INTERVENTIONS, RELATIONSHIP, SPECIAL PURPOSE, STUDY REFERENCE, TRIAL DESIGN.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef_Class_SubClass_Analysis</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">ItemGroupDef "IG.AE", Class "AE" has SubClass value "ADVERSE EVENT", but is no Analysis
-                     dataset.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemGroupDef-Class-SubClass</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"></td>
-                  <td class="message">In ItemGroupDef "AE" (IG.AE), SubClass 'ADVERSE EVENT' can only occur within the Class
-                     'OCCURRENCE DATA STRUCTURE'.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemDef_Origin_Collected</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"><a href="https://wiki.cdisc.org/x/f6OzAg">Section 5.3.12.3 def:Origin Element</a> def:Origin</td>
-                  <td class="message">ItemDef element AEACN (OID="IT.AE.AEACN") is Collected, with a source of 'Investigator'
-                     or 'Subject', but does not have a reference to a PDF document.</td>
-               </tr>
-               <tr>
-                  <td class="checkid">ItemDef_Origin_Collected</td>
-                  <td class="severity-error">ERROR</td>
-                  <td class="see"><a href="https://wiki.cdisc.org/x/f6OzAg">Section 5.3.12.3 def:Origin Element</a> def:Origin</td>
-                  <td class="message">ItemDef element AEREL (OID="IT.AE.AEREL") is Collected, with a source of 'Investigator'
-                     or 'Subject', but does not have a reference to a PDF document.</td>
+                  <td class="message">ItemGroupDef "ADLBHPV" (IG.ADLBHPV) has invalid Class value "EVENTS". For Analysis
+                     datasets the allowed values are: ADAM OTHER BASIC DATA STRUCTURE DEVICE LEVEL ANALYSIS
+                     DATASET MEDICAL DEVICE BASIC DATA STRUCTURE MEDICAL DEVICE OCCURRENCE DATA STRUCTURE
+                     OCCURRENCE DATA STRUCTURE SUBJECT LEVEL ANALYSIS DATASET.</td>
                </tr>
             </tbody>
          </table>
@@ -654,33 +534,11 @@
                </tr>
             </thead>
             <tr>
-               <td>12</td>
-               <td>67</td>
-               <td><a href="https://www.w3.org/TR/xmlschema-1/#validation_failures">cvc-enumeration-valid</a></td>
-               <td> Value 'Transactional ' is not facet-valid with respect to enumeration '[Snapshot,
-                  Transactional]'. It must be a value from the enumeration.</td>
-            </tr>
-            <tr>
-               <td>12</td>
-               <td>67</td>
-               <td><a href="https://www.w3.org/TR/xmlschema-1/#validation_failures">cvc-attribute.3</a></td>
-               <td> The value 'Transactional ' of attribute 'FileType' on element 'ODM' is not valid
-                  with respect to its type, 'FileType'.</td>
-            </tr>
-            <tr>
-               <td>3307</td>
-               <td>54</td>
-               <td><a href="https://www.w3.org/TR/xmlschema-1/#validation_failures">cvc-enumeration-valid</a></td>
-               <td> Value 'CRF' is not facet-valid with respect to enumeration '[Assigned, Collected,
-                  Derived, Not Available, Other, Predecessor, Protocol]'. It must be a value from the
-                  enumeration.</td>
-            </tr>
-            <tr>
-               <td>3307</td>
-               <td>54</td>
-               <td><a href="https://www.w3.org/TR/xmlschema-1/#validation_failures">cvc-attribute.3</a></td>
-               <td> The value 'CRF' of attribute 'Type' on element 'def:Origin' is not valid with respect
-                  to its type, 'OriginType'.</td>
+               <td>11977</td>
+               <td>38</td>
+               <td><a href="https://www.w3.org/TR/xmlschema-1/#validation_failures">cvc-complex-type.2.4.a</a></td>
+               <td> Invalid content was found starting with element '{"http://www.cdisc.org/ns/arm/v1.0":AnalysisResultDisplays}'.
+                  One of '{"http://www.cdisc.org/ns/def/v2.1":leaf}' is expected.</td>
             </tr>
             <tr></tr>
          </table>

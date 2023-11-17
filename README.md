@@ -1,13 +1,39 @@
-# *schematron4define* 
-
+# *schematron4define*
 
 ## Description
 
-The main purpose of *schematron4define* is to ....
+The main purpose of *schematron4define* is to perform Define-XML validation by combining W3C XML Schema and Schematron.
 
-If possible use images as well.
+## Requirements
 
-![Image Description](./images/placeholder.png)
+This project makes use of the following software:
+
+- **Apache Ant** ([download](https://downloads.apache.org/ant/)) This project uses version 1.10.12. An Ant version that supports the *xslt* and *schemavalidate* tasks is required to run the validation.
+- **JDK 8** or higher.
+- **Saxon-HE** ([Saxonica](https://www.saxonica.com/download/java.xml)) This project uses version 11.6. This version is available in the project.
+
+## Running the validation
+
+Open a terminal (command-prompt) in the **ant** folder. The following command validates an SDTM Define-XML file (../xml/sdtm/define.xml) against the Define-XML v2.1 schema and creates the define21_sdtm.html validation report. It uses the build.properties properties file.
+
+```SHELL
+ant
+```
+
+To validate the ADaM Define-XML example against the Define-XML v2.1 schema, enter the following command:
+
+```SHELL
+ant -Ddefine.xml=../xml/adam/define.xml -Dreport.html=define21_adam.html
+```
+
+Notice that the last validation will throw some errors because the ADaM Define-XML file contains Analysis Results Metadata.
+The following example validates the ADaM Define-XML file (including Analysis Results Metadata) against the Define-XML 2.1 schema that includes Analysis Results Metadata.
+
+```SHELL
+ant -propertyfile build_arm.properties
+```
+
+The result of the validation can be found in define21_adam_arm.html.
 
 ## Contribution
 
