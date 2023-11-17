@@ -7,7 +7,7 @@
     <property name="cdisc.define.v21.schema.namespace" value="http://www.cdisc.org/ns/odm/v1.3"/>
 
     <input message="Define-XML file:" addproperty="define.xml" defaultvalue="../xml/sdtm/define.xml"/>
-    <input message="HTML report:" addproperty="report.html"  defaultvalue="define21_sdtm.html"/>
+    <input message="HTML report:" addproperty="report.html"  defaultvalue="../report/define21_sdtm.html"/>
 
     <available file="${define.xml}" property="file.exists"/>
     <fail message="Define-XML file missing: ${define.xml}" unless="file.exists"/>
@@ -78,7 +78,7 @@
     <target name="create-html-report" depends="create-xml-report"
         description="Creates the HTML report">
         <echo>*** Report as HTML</echo>
-        <xslt style="${xsl.folder}/xml-to-html.xsl" in="${temp.folder}/define_schxslt_20_report.xml" out="${report.folder}/${report.file}">
+        <xslt style="${xsl.folder}/xml-to-html.xsl" in="${temp.folder}/define_schxslt_20_report.xml" out="${report.file}">
             <classpath refid="project.class.path"/>
             <factory name="net.sf.saxon.BasicTransformerFactory"/>
             <param name="input-uri" expression="${temp.folder}/define_xsd_validate.log"/>
