@@ -2,7 +2,8 @@
 
 ## Description
 
-The main purpose of *schematron4define* is to perform Define-XML validation by combining W3C XML Schema and Schematron.
+The main purpose of *schematron4define* is to perform Define-XML validation by combining W3C XML Schema and Schematron. Currently only a limited number of conformance rules for Define-XML v2.1 have been implemented.
+The project is still in a 'Proof of Concept' phase.
 
 ## Requirements
 
