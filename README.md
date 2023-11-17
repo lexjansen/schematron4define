@@ -2,7 +2,7 @@
 
 ## Description
 
-The main purpose of *schematron4define* is to perform Define-XML validation by combining W3C XML Schema and Schematron. Currently only a limited number of conformance rules for Define-XML v2.1 have been implemented.
+The main purpose of the *schematron4define* project is to perform [Define-XML](https://www.cdisc.org/standards/data-exchange/define-xml) validation by combining W3C XML Schema and Schematron. Currently only a limited number of conformance rules for Define-XML v2.1 have been implemented.
 The project is still in a 'Proof of Concept' phase.
 
 ## Requirements
@@ -35,6 +35,11 @@ ant -propertyfile build_arm.properties
 ```
 
 The result of the validation can be found in define21_adam_arm.html.
+
+## References
+
+- [A website for all things Schematron](https://www.schematron.com/)
+- [SchXslt [ʃˈɛksl̩t] – An XSLT-based Schematron processor](https://github.com/schxslt/schxslt)
 
 ## Contribution
 
