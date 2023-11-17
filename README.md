@@ -24,7 +24,7 @@ ant
 To validate the ADaM Define-XML example against the Define-XML v2.1 schema, enter the following command:
 
 ```SHELL
-ant -Ddefine.file=../xml/adam/define.xml -Dreport.file=define21_adam.html
+ant -Ddefine.file=../xml/adam/define.xml -Dreport.file=../report/define21_adam.html
 ```
 
 Notice that the last validation will throw some errors because the ADaM Define-XML file contains Analysis Results Metadata.
