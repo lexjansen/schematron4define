@@ -39,7 +39,7 @@ The result of the validation can be found in define21_adam_arm.html.
 ## References
 
 - [A website for all things Schematron](https://www.schematron.com/)
-- [SchXslt [ʃˈɛksl̩t] – An XSLT-based Schematron processor](https://github.com/schxslt/schxslt)
+- [SchXslt [ʃˈɛksl̩t] – An XSLT-based Schematron processor](https://codeberg.org/SchXslt/schxslt)
 
 ## Contribution
 
