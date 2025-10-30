@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="define2-1.xsl"?>
-<!-- 
-This Define-XML file is based on the file that was distributed with the 
-Study Data Tabulation Model Metadata Submission Guidelines (SDTM-MSG): 
+<!--
+This Define-XML file is based on the file that was distributed with the
+Study Data Tabulation Model Metadata Submission Guidelines (SDTM-MSG):
 Human Clinical Trials Version 2.0 (Final) (2021-03-30)
 Changes were made for demostration and testing purposes.
 -->
 <ODM xmlns="http://www.cdisc.org/ns/odm/v1.3" xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:def="http://www.cdisc.org/ns/def/v2.1" ODMVersion="1.3.2"
-  FileOID="www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0" FileType="Transactional "
+  FileOID="www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0" FileType="Transactional"
   CreationDateTime="2021-01-24T16:59:33" def:Context="Submission">
 
 
