@@ -6,11 +6,11 @@
     <property file="build.properties"/>
     <property name="cdisc.define.v21.schema.namespace" value="http://www.cdisc.org/ns/odm/v1.3"/>
 
-    <input message="Define-XML file:" addproperty="define.xml" defaultvalue="../xml/sdtm/define.xml"/>
-    <input message="HTML report:" addproperty="report.html"  defaultvalue="../report/define21_sdtm.html"/>
+    <input message="Define-XML file:" addproperty="define.file" defaultvalue="../xml/sdtm/define.xml"/>
+    <input message="HTML report:" addproperty="report.file"  defaultvalue="../report/define21_sdtm.html"/>
 
-    <available file="${define.xml}" property="file.exists"/>
-    <fail message="Define-XML file missing: ${define.xml}" unless="file.exists"/>
+    <available file="${define.file}" property="file.exists"/>
+    <fail message="Define-XML file missing: ${define.file}" unless="file.exists"/>
 
     <path id="project.class.path">
         <pathelement path="${saxon.jar}"/>
